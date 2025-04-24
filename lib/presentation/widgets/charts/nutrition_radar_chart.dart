@@ -54,7 +54,7 @@ class NutritionRadarChart extends StatelessWidget {
                 const SizedBox(width: 16),
                 _buildLegendItem(
                   'Recommended',
-                  AppColors.secondaryColor.withOpacity(0.5),
+                  AppColors.secondaryColor.withAlpha(128),
                 ),
               ],
             ),
@@ -143,7 +143,7 @@ class RadarChartPainter extends CustomPainter {
   void _drawGrid(Canvas canvas, Offset center, double radius) {
     final gridPaint =
         Paint()
-          ..color = Colors.grey.withOpacity(0.3)
+          ..color = Colors.grey.withAlpha(76)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1;
 
@@ -199,7 +199,7 @@ class RadarChartPainter extends CustomPainter {
   void _drawValues(Canvas canvas, Offset center, double radius) {
     final valuePaint =
         Paint()
-          ..color = AppColors.primaryColor.withOpacity(0.7)
+          ..color = AppColors.primaryColor.withAlpha(179)
           ..style = PaintingStyle.fill;
 
     final borderPaint =
@@ -243,7 +243,7 @@ class RadarChartPainter extends CustomPainter {
   void _drawIdealValues(Canvas canvas, Offset center, double radius) {
     final idealPaint =
         Paint()
-          ..color = AppColors.secondaryColor.withOpacity(0.5)
+          ..color = AppColors.secondaryColor.withAlpha(128)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5;
 
