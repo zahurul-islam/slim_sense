@@ -6,7 +6,8 @@ class AppConstants {
   // API Settings
   static const int apiTimeoutDuration = 30;
   static const String apiBaseUrl = 'https://api.slimsense.com/v1';
-  static const String pythonBackendUrl = 'http://localhost:8000'; // Local Python backend
+  static const String pythonBackendUrl =
+      'http://localhost:8000'; // Local Python backend
 
   // Local Storage Keys
   static const String isFirstTimeKey = 'is_first_time';
@@ -29,9 +30,7 @@ class AppConstants {
   static const String nutritionixApiKey = 'YOUR_NUTRITIONIX_API_KEY';
 
   // AI Service
-  static const String openRouterApiKey = 'YOUR_OPENROUTER_API_KEY';
-  static const String openaiApiKey = 'YOUR_OPENAI_API_KEY';
-  static const String huggingfaceApiKey = 'YOUR_HUGGINGFACE_API_KEY';
+  // API keys are now stored in .env file and accessed via EnvConfig
 
   // Time Formats
   static const String dateFormat = 'yyyy-MM-dd';

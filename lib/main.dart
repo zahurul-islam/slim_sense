@@ -10,9 +10,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:logger/logger.dart';
 
 // App constants and themes
 import 'core/constants/app_constants.dart';
+import 'core/config/env_config.dart';
 import 'presentation/themes/app_theme.dart';
 
 // Repositories
@@ -40,6 +42,12 @@ import 'presentation/pages/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load environment variables
+  await EnvConfig.load();
+
+  // Initialize logger
+  final logger = Logger();
+
   // Variables to track initialization status
   bool isFirebaseInitialized = false;
   bool isHiveInitialized = false;
@@ -48,9 +56,9 @@ void main() async {
   try {
     await Firebase.initializeApp();
     isFirebaseInitialized = true;
-    print('Firebase initialized successfully');
+    logger.i('Firebase initialized successfully');
   } catch (e) {
-    print('Failed to initialize Firebase: $e');
+    logger.e('Failed to initialize Firebase: $e');
     // Continue without Firebase in development mode
   }
 
@@ -65,9 +73,9 @@ void main() async {
     await Hive.openBox('weightLogs');
     await Hive.openBox('userSettings');
     isHiveInitialized = true;
-    print('Hive boxes opened successfully');
+    logger.i('Hive boxes opened successfully');
   } catch (e) {
-    print('Failed to open Hive boxes: $e');
+    logger.e('Failed to open Hive boxes: $e');
     // Continue without Hive in development mode
   }
 
@@ -145,9 +153,7 @@ class MyApp extends StatelessWidget {
             : MockFoodRepository(dio: dio);
 
     // Initialize AI service
-    final aiService = ai_service.AIService(
-      openRouterApiKey: AppConstants.openRouterApiKey,
-    );
+    final aiService = ai_service.AIService();
 
     // Create a multi-provider app
     return MultiRepositoryProvider(
