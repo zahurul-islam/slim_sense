@@ -17,6 +17,7 @@ import '../../../../presentation/bloc/food/food_event.dart';
 import '../../../../presentation/bloc/food/food_state.dart';
 import '../../weight/add_weight_screen.dart';
 import '../../food/add_food_screen.dart';
+import '../../../widgets/health_coach_card.dart';
 
 class DashboardTab extends StatefulWidget {
   const DashboardTab({super.key});
@@ -114,6 +115,8 @@ class _DashboardTabState extends State<DashboardTab> {
                 _buildWaterTrackingCard(),
                 const SizedBox(height: 24),
                 _buildNutritionSummaryCard(),
+                const SizedBox(height: 24),
+                const HealthCoachCard(),
                 const SizedBox(height: 24),
                 _buildWeightTrendCard(),
                 const SizedBox(height: 16),

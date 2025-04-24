@@ -11,6 +11,7 @@ import '../../ai/meal_recommendation_screen.dart';
 import '../../ai/workout_recommendation_screen.dart';
 import '../../ai/diet_analysis_screen.dart';
 import '../../ai/weight_forecast_screen.dart';
+import '../../health_coach/health_coach_screen.dart';
 
 class AiCoachTab extends StatefulWidget {
   const AiCoachTab({super.key});
@@ -19,14 +20,16 @@ class AiCoachTab extends StatefulWidget {
   State<AiCoachTab> createState() => _AiCoachTabState();
 }
 
-class _AiCoachTabState extends State<AiCoachTab> with SingleTickerProviderStateMixin {
+class _AiCoachTabState extends State<AiCoachTab>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _tabTitles = [
     'Weight Loss',
     'Meals',
     'Workouts',
     'Analysis',
-    'Forecast'
+    'Forecast',
+    'Health Coach',
   ];
 
   @override
@@ -81,6 +84,7 @@ class _AiCoachTabState extends State<AiCoachTab> with SingleTickerProviderStateM
                 WorkoutRecommendationScreen(user: userState.user),
                 DietAnalysisScreen(user: userState.user),
                 WeightForecastScreen(user: userState.user),
+                const HealthCoachScreen(),
               ],
             ),
           );
@@ -95,52 +99,59 @@ class _AiCoachTabState extends State<AiCoachTab> with SingleTickerProviderStateM
   void _showAiCoachHelp(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('AI Coach Features'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHelpSection(
-                'Weight Loss Plan',
-                'Get a personalized weight loss plan including calorie targets, macronutrients, meal ideas, and exercise recommendations.',
-                Icons.trending_down,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('AI Coach Features'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHelpSection(
+                    'Weight Loss Plan',
+                    'Get a personalized weight loss plan including calorie targets, macronutrients, meal ideas, and exercise recommendations.',
+                    Icons.trending_down,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Meal Recommendations',
+                    'Receive custom meal suggestions based on your calorie goals, dietary preferences, and available ingredients.',
+                    Icons.restaurant_menu,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Workout Plans',
+                    'Get personalized workout routines tailored to your fitness level, goals, and available equipment.',
+                    Icons.fitness_center,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Diet Analysis',
+                    'AI analysis of your eating habits from your food logs, identifying strengths and areas for improvement.',
+                    Icons.analytics,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Weight Forecast',
+                    'Projection of your future weight progress based on current trends and recommendations for staying on track.',
+                    Icons.trending_up,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Health Coach',
+                    'Chat with an AI health coach powered by Microsoft MAI-DS-R1 model for personalized advice on nutrition, fitness, and wellness.',
+                    Icons.health_and_safety,
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              _buildHelpSection(
-                'Meal Recommendations',
-                'Receive custom meal suggestions based on your calorie goals, dietary preferences, and available ingredients.',
-                Icons.restaurant_menu,
-              ),
-              const SizedBox(height: 16),
-              _buildHelpSection(
-                'Workout Plans',
-                'Get personalized workout routines tailored to your fitness level, goals, and available equipment.',
-                Icons.fitness_center,
-              ),
-              const SizedBox(height: 16),
-              _buildHelpSection(
-                'Diet Analysis',
-                'AI analysis of your eating habits from your food logs, identifying strengths and areas for improvement.',
-                Icons.analytics,
-              ),
-              const SizedBox(height: 16),
-              _buildHelpSection(
-                'Weight Forecast',
-                'Projection of your future weight progress based on current trends and recommendations for staying on track.',
-                Icons.trending_up,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -148,11 +159,7 @@ class _AiCoachTabState extends State<AiCoachTab> with SingleTickerProviderStateM
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: AppColors.primary,
-          size: 24,
-        ),
+        Icon(icon, color: AppColors.primary, size: 24),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -165,10 +172,7 @@ class _AiCoachTabState extends State<AiCoachTab> with SingleTickerProviderStateM
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                description,
-                style: AppTypography.bodyMedium,
-              ),
+              Text(description, style: AppTypography.bodyMedium),
             ],
           ),
         ),
