@@ -1,19 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import '../config/env_config.dart';
 
+/// Service for interacting with the OpenRouter API
 class OpenRouterService {
-  final String apiUrl;
-  final String apiKey;
-  final String model;
+  // Fixed API endpoint and credentials
+  static const String _apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
+  static const String _apiKey =
+      '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';
+  static const String _model = 'microsoft/mai-ds-r1:free';
+
   final _logger = Logger();
 
-  OpenRouterService({String? apiUrl, String? apiKey, String? model})
-    : this.apiUrl = apiUrl ?? EnvConfig.openRouterUrl,
-      this.apiKey = apiKey ?? EnvConfig.openRouterApiKey,
-      this.model = model ?? EnvConfig.openRouterModel;
-
+  /// Get a response from the AI health coach
   Future<String> getHealthCoachResponse(
     String prompt, {
     List<Map<String, String>>? history,
@@ -21,19 +20,10 @@ class OpenRouterService {
     int maxRetries = 3,
   }) async {
     try {
-      // Debug logging
-      _logger.d('API URL: $apiUrl');
-      _logger.d('API Key: ${apiKey.substring(0, 10)}...');
-      _logger.d('API Key length: ${apiKey.length}');
-      _logger.d('Model: $model');
+      _logger.i('Sending request to OpenRouter API');
+      _logger.d('Model: $_model');
 
-      // Check if API key is empty
-      if (apiKey.isEmpty) {
-        _logger.e(
-          'API key is empty! Environment variables may not be loading correctly.',
-        );
-        return 'Sorry, there was an error with the API configuration. Please try again later.';
-      }
+      // Prepare the messages array
       final List<Map<String, String>> messages = [];
 
       // Add system message to define the AI's role
@@ -56,34 +46,34 @@ class OpenRouterService {
       // Add the current user message
       messages.add({'role': 'user', 'content': prompt});
 
-      // Use the direct API key for debugging
-      final directApiKey =
-          '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';
-
-      _logger.d('Using direct API key for debugging');
+      // Prepare the request body
+      final requestBody = {
+        'model': _model,
+        'messages': messages,
+        'temperature': 0.7,
+        'max_tokens': 1000,
+      };
 
       // Prepare headers with proper authorization
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $directApiKey',
+        'Authorization': 'Bearer $_apiKey',
         'HTTP-Referer': 'https://slim-sense.app',
         'X-Title': 'SlimSense Health Coach',
       };
 
-      _logger.d('Headers: $headers');
+      _logger.d('Request body: ${jsonEncode(requestBody)}');
 
+      // Send the request
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(_apiUrl),
         headers: headers,
-        body: jsonEncode({
-          'model': model,
-          'messages': messages,
-          'temperature': 0.7,
-          'max_tokens': 1000,
-        }),
+        body: jsonEncode(requestBody),
       );
 
+      // Handle the response
       if (response.statusCode == 200) {
+        _logger.i('Received successful response from OpenRouter API');
         final data = jsonDecode(response.body);
         return data['choices'][0]['message']['content'];
       } else {
@@ -92,22 +82,8 @@ class OpenRouterService {
 
         // Handle specific error codes
         if (response.statusCode == 401) {
-          _logger.e('Authentication error details: ${response.body}');
-
-          // Try to parse the error message
-          try {
-            final errorData = jsonDecode(response.body);
-            final errorMessage = errorData['error']['message'];
-            _logger.e('Error message: $errorMessage');
-
-            if (errorMessage.contains('No auth credentials found')) {
-              _logger.e('API key not being sent properly in the request');
-            }
-          } catch (e) {
-            _logger.e('Failed to parse error response: $e');
-          }
-
-          return 'Sorry, there was an authentication error. Please check your API key configuration.';
+          _logger.e('Authentication error');
+          return 'Sorry, there was an authentication error. Please try again later.';
         } else if (response.statusCode == 503) {
           // Implement retry logic for service unavailability
           if (retryCount < maxRetries) {

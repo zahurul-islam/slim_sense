@@ -25,9 +25,9 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
   @override
   void initState() {
     super.initState();
-    _healthCoachBloc = HealthCoachBloc(
-      openRouterService: OpenRouterService(),
-    );
+    // Initialize the health coach bloc with the OpenRouter service
+    _healthCoachBloc = HealthCoachBloc(openRouterService: OpenRouterService());
+    // Load chat history
     _healthCoachBloc.add(LoadChatHistory());
   }
 
@@ -96,7 +96,9 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
                   }
                 },
                 builder: (context, state) {
-                  if (state is HealthCoachInitial || state is HealthCoachLoading && (state as HealthCoachLoading).props.isEmpty) {
+                  if (state is HealthCoachInitial ||
+                      state is HealthCoachLoading &&
+                          (state as HealthCoachLoading).props.isEmpty) {
                     return const Center(
                       child: LoadingIndicator(
                         message: 'Loading your health coach...',
@@ -167,23 +169,31 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
 
   Widget _buildMessageItem(ChatMessageModel message) {
     final isUser = message.role == 'user';
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) _buildAvatar(isUser),
           const SizedBox(width: 8),
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
-                    color: isUser ? AppColors.primaryColor : AppColors.surfaceColor,
+                    color:
+                        isUser
+                            ? AppColors.primaryColor
+                            : AppColors.surfaceColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -213,7 +223,10 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
   Widget _buildAvatar(bool isUser) {
     return CircleAvatar(
       radius: 16,
-      backgroundColor: isUser ? AppColors.primaryColor.withOpacity(0.2) : AppColors.secondaryColor.withOpacity(0.2),
+      backgroundColor:
+          isUser
+              ? AppColors.primaryColor.withOpacity(0.2)
+              : AppColors.secondaryColor.withOpacity(0.2),
       child: Icon(
         isUser ? Icons.person : Icons.health_and_safety,
         size: 20,
@@ -239,11 +252,7 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDot(1),
-                _buildDot(2),
-                _buildDot(3),
-              ],
+              children: [_buildDot(1), _buildDot(2), _buildDot(3)],
             ),
           ),
         ],
@@ -259,10 +268,7 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
         duration: Duration(milliseconds: 400),
         curve: Curves.easeInOut,
         builder: (context, value, child) {
-          return Opacity(
-            opacity: value,
-            child: child,
-          );
+          return Opacity(opacity: value, child: child);
         },
         child: Container(
           width: 8,
@@ -315,21 +321,22 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
           BlocBuilder<HealthCoachBloc, HealthCoachState>(
             builder: (context, state) {
               final isLoading = state is HealthCoachLoaded && state.isTyping;
-              
+
               return FloatingActionButton(
                 onPressed: isLoading ? null : _sendMessage,
                 backgroundColor: AppColors.primaryColor,
                 elevation: 0,
-                child: isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Icon(Icons.send),
+                child:
+                    isLoading
+                        ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                        : const Icon(Icons.send),
               );
             },
           ),
@@ -341,56 +348,61 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
   void _showInfoDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('About AI Health Coach'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Your AI Health Coach is powered by Microsoft\'s MAI-DS-R1 model and can help you with:',
-                style: AppTypography.bodyMedium,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('About AI Health Coach'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Your AI Health Coach is powered by Microsoft\'s MAI-DS-R1 model and can help you with:',
+                    style: AppTypography.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFeatureItem(
+                    icon: Icons.fitness_center,
+                    title: 'Fitness Advice',
+                    description:
+                        'Get personalized workout recommendations based on your goals.',
+                  ),
+                  _buildFeatureItem(
+                    icon: Icons.restaurant_menu,
+                    title: 'Nutrition Guidance',
+                    description:
+                        'Learn about balanced eating and meal planning for your health goals.',
+                  ),
+                  _buildFeatureItem(
+                    icon: Icons.self_improvement,
+                    title: 'Wellness Tips',
+                    description:
+                        'Discover strategies for better sleep, stress management, and overall wellbeing.',
+                  ),
+                  _buildFeatureItem(
+                    icon: Icons.track_changes,
+                    title: 'Progress Tracking',
+                    description:
+                        'Get insights on how to effectively monitor your health journey.',
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Note: While our AI coach provides evidence-based information, it should not replace professional medical advice.',
+                    style: AppTypography.bodySmall.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              _buildFeatureItem(
-                icon: Icons.fitness_center,
-                title: 'Fitness Advice',
-                description: 'Get personalized workout recommendations based on your goals.',
-              ),
-              _buildFeatureItem(
-                icon: Icons.restaurant_menu,
-                title: 'Nutrition Guidance',
-                description: 'Learn about balanced eating and meal planning for your health goals.',
-              ),
-              _buildFeatureItem(
-                icon: Icons.self_improvement,
-                title: 'Wellness Tips',
-                description: 'Discover strategies for better sleep, stress management, and overall wellbeing.',
-              ),
-              _buildFeatureItem(
-                icon: Icons.track_changes,
-                title: 'Progress Tracking',
-                description: 'Get insights on how to effectively monitor your health journey.',
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Note: While our AI coach provides evidence-based information, it should not replace professional medical advice.',
-                style: AppTypography.bodySmall.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: AppColors.textSecondary,
-                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -410,11 +422,7 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
               color: AppColors.primaryColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: AppColors.primaryColor,
-            ),
+            child: Icon(icon, size: 20, color: AppColors.primaryColor),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -428,10 +436,7 @@ class _HealthCoachScreenState extends State<HealthCoachScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: AppTypography.bodySmall,
-                ),
+                Text(description, style: AppTypography.bodySmall),
               ],
             ),
           ),
