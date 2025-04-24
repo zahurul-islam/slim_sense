@@ -4,12 +4,15 @@ import 'package:logger/logger.dart';
 import '../config/env_config.dart';
 
 class OpenRouterService {
-  // Use direct string values for now to debug
-  final String apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
-  final String apiKey =
-      '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';
-  final String model = 'microsoft/mai-ds-r1:free';
+  final String apiUrl;
+  final String apiKey;
+  final String model;
   final _logger = Logger();
+
+  OpenRouterService({String? apiUrl, String? apiKey, String? model})
+    : this.apiUrl = apiUrl ?? EnvConfig.openRouterUrl,
+      this.apiKey = apiKey ?? EnvConfig.openRouterApiKey,
+      this.model = model ?? EnvConfig.openRouterModel;
 
   Future<String> getHealthCoachResponse(
     String prompt, {
