@@ -17,12 +17,23 @@ class OpenRouterService {
   Future<String> getHealthCoachResponse(
     String prompt, {
     List<Map<String, String>>? history,
+    int retryCount = 0,
+    int maxRetries = 3,
   }) async {
     try {
       // Debug logging
       _logger.d('API URL: $apiUrl');
+      _logger.d('API Key: ${apiKey.substring(0, 10)}...');
       _logger.d('API Key length: ${apiKey.length}');
       _logger.d('Model: $model');
+
+      // Check if API key is empty
+      if (apiKey.isEmpty) {
+        _logger.e(
+          'API key is empty! Environment variables may not be loading correctly.',
+        );
+        return 'Sorry, there was an error with the API configuration. Please try again later.';
+      }
       final List<Map<String, String>> messages = [];
 
       // Add system message to define the AI's role
@@ -45,15 +56,25 @@ class OpenRouterService {
       // Add the current user message
       messages.add({'role': 'user', 'content': prompt});
 
+      // Use the direct API key for debugging
+      final directApiKey =
+          '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';
+
+      _logger.d('Using direct API key for debugging');
+
+      // Prepare headers with proper authorization
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $directApiKey',
+        'HTTP-Referer': 'https://slim-sense.app',
+        'X-Title': 'SlimSense Health Coach',
+      };
+
+      _logger.d('Headers: $headers');
+
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-          'HTTP-Referer':
-              'https://slim-sense.app', // Replace with your actual domain
-          'X-Title': 'SlimSense Health Coach',
-        },
+        headers: headers,
         body: jsonEncode({
           'model': model,
           'messages': messages,
@@ -68,7 +89,46 @@ class OpenRouterService {
       } else {
         _logger.e('Error: ${response.statusCode}');
         _logger.e('Response: ${response.body}');
-        return 'Sorry, I encountered an error. Please try again later.';
+
+        // Handle specific error codes
+        if (response.statusCode == 401) {
+          _logger.e('Authentication error details: ${response.body}');
+
+          // Try to parse the error message
+          try {
+            final errorData = jsonDecode(response.body);
+            final errorMessage = errorData['error']['message'];
+            _logger.e('Error message: $errorMessage');
+
+            if (errorMessage.contains('No auth credentials found')) {
+              _logger.e('API key not being sent properly in the request');
+            }
+          } catch (e) {
+            _logger.e('Failed to parse error response: $e');
+          }
+
+          return 'Sorry, there was an authentication error. Please check your API key configuration.';
+        } else if (response.statusCode == 503) {
+          // Implement retry logic for service unavailability
+          if (retryCount < maxRetries) {
+            _logger.i(
+              'Service unavailable, retrying (${retryCount + 1}/$maxRetries)...',
+            );
+            // Wait for a bit before retrying (exponential backoff)
+            await Future.delayed(
+              Duration(milliseconds: 1000 * (retryCount + 1)),
+            );
+            return getHealthCoachResponse(
+              prompt,
+              history: history,
+              retryCount: retryCount + 1,
+              maxRetries: maxRetries,
+            );
+          }
+          return 'Sorry, the AI service is temporarily unavailable. Please try again later.';
+        } else {
+          return 'Sorry, I encountered an error. Please try again later.';
+        }
       }
     } catch (e) {
       _logger.e('Exception: $e');
