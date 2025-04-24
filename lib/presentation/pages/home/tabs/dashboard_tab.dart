@@ -435,10 +435,11 @@ class _DashboardTabState extends State<DashboardTab> {
       builder: (context, state) {
         if (state is DailyNutritionSummaryLoaded) {
           final summary = state.summary;
-          final totalCalories = summary['totalCalories'] as int? ?? 0;
-          final totalProtein = summary['totalProtein'] as int? ?? 0;
-          final totalCarbs = summary['totalCarbs'] as int? ?? 0;
-          final totalFat = summary['totalFat'] as int? ?? 0;
+          final totalCalories =
+              (summary['totalCalories'] as num?)?.toInt() ?? 0;
+          final totalProtein = (summary['totalProtein'] as num?)?.toInt() ?? 0;
+          final totalCarbs = (summary['totalCarbs'] as num?)?.toInt() ?? 0;
+          final totalFat = (summary['totalFat'] as num?)?.toInt() ?? 0;
 
           // Default calorie goal
           const calorieGoal = 2000;
