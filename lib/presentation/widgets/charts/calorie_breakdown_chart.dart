@@ -22,16 +22,19 @@ class CalorieBreakdownChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final totalCalories = proteinCalories + carbsCalories + fatCalories;
-    
+
     // Calculate percentages
-    final proteinPercentage = totalCalories > 0 ? proteinCalories / totalCalories : 0;
-    final carbsPercentage = totalCalories > 0 ? carbsCalories / totalCalories : 0;
+    final proteinPercentage =
+        totalCalories > 0 ? proteinCalories / totalCalories : 0;
+    final carbsPercentage =
+        totalCalories > 0 ? carbsCalories / totalCalories : 0;
     final fatPercentage = totalCalories > 0 ? fatCalories / totalCalories : 0;
-    
+
     // Calculate progress towards goal
-    final goalProgress = calorieGoal != null && calorieGoal! > 0 
-        ? (totalCalories / calorieGoal!).clamp(0.0, 1.0) 
-        : null;
+    final goalProgress =
+        calorieGoal != null && calorieGoal! > 0
+            ? (totalCalories / calorieGoal!).clamp(0.0, 1.0)
+            : null;
 
     return SizedBox(
       width: size,
@@ -76,9 +79,8 @@ class CalorieBreakdownChart extends StatelessWidget {
                 ),
               ],
             ),
-            swapAnimationDuration: const Duration(milliseconds: 500),
           ),
-          
+
           // Center text
           Center(
             child: Column(

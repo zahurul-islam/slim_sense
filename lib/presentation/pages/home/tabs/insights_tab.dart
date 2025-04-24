@@ -545,37 +545,33 @@ class _InsightsTabState extends State<InsightsTab> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...aiInsights
-                      .map(
-                        (insight) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: InsightCard(
-                            title: insight['title'],
-                            description: insight['description'],
-                            icon: insight['icon'],
-                            color: insight['color'],
-                            progress: insight['progress'],
-                            data: insight['data'],
-                            actionText: insight['actionText'],
-                            onAction:
-                                insight['actionText'] != null
-                                    ? () {
-                                      // Handle action
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Action: ${insight['actionText']}',
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    : null,
-                          ),
-                        ),
-                      )
-                      .toList(),
+                  ...aiInsights.map(
+                    (insight) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: InsightCard(
+                        title: insight['title'],
+                        description: insight['description'],
+                        icon: insight['icon'],
+                        color: insight['color'],
+                        progress: insight['progress'],
+                        data: insight['data'],
+                        actionText: insight['actionText'],
+                        onAction:
+                            insight['actionText'] != null
+                                ? () {
+                                  // Handle action
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Action: ${insight['actionText']}',
+                                      ),
+                                    ),
+                                  );
+                                }
+                                : null,
+                      ),
+                    ),
+                  ),
                 ],
               );
             } else {
