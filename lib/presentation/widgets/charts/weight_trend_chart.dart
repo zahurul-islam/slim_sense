@@ -46,9 +46,10 @@ class WeightTrendChart extends StatelessWidget {
       ..sort((a, b) => a.loggedAt.compareTo(b.loggedAt));
 
     // Create spots for the chart
-    final spots = sortedLogs.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.weightInKg);
-    }).toList();
+    final spots =
+        sortedLogs.asMap().entries.map((entry) {
+          return FlSpot(entry.key.toDouble(), entry.value.weightInKg);
+        }).toList();
 
     // Calculate min and max values for the chart
     final minWeight = sortedLogs
@@ -61,7 +62,7 @@ class WeightTrendChart extends StatelessWidget {
     // Add target weight to min/max calculation if available
     double minY = minWeight - 1;
     double maxY = maxWeight + 1;
-    
+
     if (targetWeight != null && showTarget) {
       minY = minY < targetWeight! ? minY : targetWeight! - 1;
       maxY = maxY > targetWeight! ? maxY : targetWeight! + 1;
@@ -85,19 +86,15 @@ class WeightTrendChart extends StatelessWidget {
           ),
           titlesData: FlTitlesData(
             show: showLabels,
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: showLabels,
                 getTitlesWidget: (value, meta) {
                   if (value.toInt() >= 0 && value.toInt() < sortedLogs.length) {
                     // Show date for first, middle and last points
-                    if (value.toInt() == 0 || 
+                    if (value.toInt() == 0 ||
                         value.toInt() == sortedLogs.length - 1 ||
                         value.toInt() == (sortedLogs.length / 2).floor()) {
                       final date = sortedLogs[value.toInt()].loggedAt;
@@ -137,7 +134,6 @@ class WeightTrendChart extends StatelessWidget {
           maxY: maxY,
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: AppColors.surfaceColor,
               getTooltipItems: (touchedSpots) {
                 return touchedSpots.map((spot) {
                   final index = spot.x.toInt();
@@ -181,8 +177,8 @@ class WeightTrendChart extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primaryColor.withOpacity(0.3),
-                    AppColors.primaryColor.withOpacity(0.0),
+                    AppColors.primaryColor.withAlpha(76), // 0.3 opacity
+                    AppColors.primaryColor.withAlpha(0), // 0.0 opacity
                   ],
                 ),
               ),
@@ -195,7 +191,7 @@ class WeightTrendChart extends StatelessWidget {
                   FlSpot((sortedLogs.length - 1).toDouble(), targetWeight!),
                 ],
                 isCurved: false,
-                color: AppColors.accentColor,
+                color: AppColors.secondaryColor,
                 barWidth: 2,
                 isStrokeCapRound: true,
                 dotData: const FlDotData(show: false),
@@ -203,7 +199,6 @@ class WeightTrendChart extends StatelessWidget {
               ),
           ],
         ),
-        swapAnimationDuration: animate ? const Duration(milliseconds: 500) : Duration.zero,
       ),
     );
   }

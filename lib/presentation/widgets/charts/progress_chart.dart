@@ -39,14 +39,16 @@ class ProgressChart extends StatelessWidget {
       ..sort((a, b) => a.loggedAt.compareTo(b.loggedAt));
 
     // Get the last N days of data
-    final recentLogs = sortedLogs.length > daysToShow
-        ? sortedLogs.sublist(sortedLogs.length - daysToShow)
-        : sortedLogs;
+    final recentLogs =
+        sortedLogs.length > daysToShow
+            ? sortedLogs.sublist(sortedLogs.length - daysToShow)
+            : sortedLogs;
 
     // Create weight spots for the chart
-    final weightSpots = recentLogs.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.weightInKg);
-    }).toList();
+    final weightSpots =
+        recentLogs.asMap().entries.map((entry) {
+          return FlSpot(entry.key.toDouble(), entry.value.weightInKg);
+        }).toList();
 
     // Calculate min and max values for weight
     final minWeight = recentLogs
@@ -62,10 +64,10 @@ class ProgressChart extends StatelessWidget {
 
     // Create calorie spots for the chart
     final calorieSpots = <FlSpot>[];
-    
+
     // Calculate max calories for scaling
     double maxCalories = 0;
-    
+
     for (int i = 0; i < recentLogs.length; i++) {
       final date = DateFormat('yyyy-MM-dd').format(recentLogs[i].loggedAt);
       if (foodLogsByDate.containsKey(date)) {
@@ -74,19 +76,19 @@ class ProgressChart extends StatelessWidget {
         for (var log in logs) {
           totalCalories += log.calories;
         }
-        
+
         if (totalCalories > maxCalories) {
           maxCalories = totalCalories;
         }
-        
+
         // Scale calories to fit on the same chart as weight
         final scaledCalories = _scaleCaloriesToWeight(
-          totalCalories, 
-          maxCalories, 
-          minY, 
-          maxY
+          totalCalories,
+          maxCalories,
+          minY,
+          maxY,
         );
-        
+
         calorieSpots.add(FlSpot(i.toDouble(), scaledCalories));
       } else {
         // No food logs for this date
@@ -111,19 +113,15 @@ class ProgressChart extends StatelessWidget {
             },
           ),
           titlesData: FlTitlesData(
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 getTitlesWidget: (value, meta) {
                   if (value.toInt() >= 0 && value.toInt() < recentLogs.length) {
                     // Show date for first, middle and last points
-                    if (value.toInt() == 0 || 
+                    if (value.toInt() == 0 ||
                         value.toInt() == recentLogs.length - 1 ||
                         value.toInt() == (recentLogs.length / 2).floor()) {
                       final date = recentLogs[value.toInt()].loggedAt;
@@ -163,14 +161,13 @@ class ProgressChart extends StatelessWidget {
           maxY: maxY,
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: AppColors.surfaceColor,
               getTooltipItems: (touchedSpots) {
                 return touchedSpots.map((spot) {
                   final index = spot.x.toInt();
                   if (index >= 0 && index < recentLogs.length) {
                     final log = recentLogs[index];
                     final date = DateFormat('yyyy-MM-dd').format(log.loggedAt);
-                    
+
                     if (spot.barIndex == 0) {
                       // Weight spot
                       return LineTooltipItem(
@@ -188,7 +185,7 @@ class ProgressChart extends StatelessWidget {
                         for (var log in logs) {
                           totalCalories += log.calories;
                         }
-                        
+
                         return LineTooltipItem(
                           'Calories: ${totalCalories.toStringAsFixed(0)}\n${DateFormat('MMM d').format(log.loggedAt)}',
                           AppTypography.labelMedium.copyWith(
@@ -245,24 +242,24 @@ class ProgressChart extends StatelessWidget {
             ),
           ],
         ),
-        swapAnimationDuration: const Duration(milliseconds: 500),
       ),
     );
   }
-  
+
   // Helper method to scale calories to fit on the same chart as weight
   double _scaleCaloriesToWeight(
-    double calories, 
-    double maxCalories, 
-    double minWeight, 
-    double maxWeight
+    double calories,
+    double maxCalories,
+    double minWeight,
+    double maxWeight,
   ) {
     if (maxCalories == 0) return minWeight;
-    
+
     // Scale calories to the weight range
     final weightRange = maxWeight - minWeight;
-    final scaledValue = minWeight + (calories / maxCalories) * weightRange * 0.8;
-    
+    final scaledValue =
+        minWeight + (calories / maxCalories) * weightRange * 0.8;
+
     return scaledValue;
   }
 }

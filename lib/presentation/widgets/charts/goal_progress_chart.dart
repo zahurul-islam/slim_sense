@@ -42,18 +42,21 @@ class GoalProgressChart extends StatelessWidget {
     // Calculate total progress
     final totalChange = targetWeight - startWeight;
     final currentChange = currentWeight - startWeight;
-    final progressPercentage = totalChange != 0 
-        ? (currentChange / totalChange).abs().clamp(0.0, 1.0) 
-        : 0.0;
+    final progressPercentage =
+        totalChange != 0
+            ? (currentChange / totalChange).abs().clamp(0.0, 1.0)
+            : 0.0;
 
     // Create spots for the chart
-    final spots = sortedLogs.asMap().entries.map((entry) {
-      final logChange = entry.value.weightInKg - startWeight;
-      final logProgress = totalChange != 0 
-          ? (logChange / totalChange).abs().clamp(0.0, 1.0) 
-          : 0.0;
-      return FlSpot(entry.key.toDouble(), logProgress);
-    }).toList();
+    final spots =
+        sortedLogs.asMap().entries.map((entry) {
+          final logChange = entry.value.weightInKg - startWeight;
+          final logProgress =
+              totalChange != 0
+                  ? (logChange / totalChange).abs().clamp(0.0, 1.0)
+                  : 0.0;
+          return FlSpot(entry.key.toDouble(), logProgress);
+        }).toList();
 
     return SizedBox(
       height: height,
@@ -85,11 +88,13 @@ class GoalProgressChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
-                        if (value.toInt() >= 0 && value.toInt() < sortedLogs.length) {
+                        if (value.toInt() >= 0 &&
+                            value.toInt() < sortedLogs.length) {
                           // Show date for first, middle and last points
-                          if (value.toInt() == 0 || 
+                          if (value.toInt() == 0 ||
                               value.toInt() == sortedLogs.length - 1 ||
-                              value.toInt() == (sortedLogs.length / 2).floor()) {
+                              value.toInt() ==
+                                  (sortedLogs.length / 2).floor()) {
                             final date = sortedLogs[value.toInt()].loggedAt;
                             return Padding(
                               padding: const EdgeInsets.only(top: 8.0),
@@ -127,16 +132,16 @@ class GoalProgressChart extends StatelessWidget {
                 maxY: 1,
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: AppColors.surfaceColor,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         final index = spot.x.toInt();
                         if (index >= 0 && index < sortedLogs.length) {
                           final log = sortedLogs[index];
                           final logChange = log.weightInKg - startWeight;
-                          final logProgress = totalChange != 0 
-                              ? (logChange / totalChange).abs() 
-                              : 0.0;
+                          final logProgress =
+                              totalChange != 0
+                                  ? (logChange / totalChange).abs()
+                                  : 0.0;
                           return LineTooltipItem(
                             '${(logProgress * 100).toStringAsFixed(1)}%\n${DateFormat('MMM d, y').format(log.loggedAt)}',
                             AppTypography.labelMedium.copyWith(
@@ -154,7 +159,7 @@ class GoalProgressChart extends StatelessWidget {
                   LineChartBarData(
                     spots: spots,
                     isCurved: true,
-                    color: AppColors.accentColor,
+                    color: AppColors.secondaryColor,
                     barWidth: 3,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -162,7 +167,7 @@ class GoalProgressChart extends StatelessWidget {
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: AppColors.accentColor,
+                          color: AppColors.secondaryColor,
                           strokeWidth: 2,
                           strokeColor: Colors.white,
                         );
@@ -174,8 +179,8 @@ class GoalProgressChart extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          AppColors.accentColor.withOpacity(0.3),
-                          AppColors.accentColor.withOpacity(0.0),
+                          AppColors.secondaryColor.withAlpha(76), // 0.3 opacity
+                          AppColors.secondaryColor.withAlpha(0), // 0.0 opacity
                         ],
                       ),
                     ),
@@ -187,7 +192,7 @@ class GoalProgressChart extends StatelessWidget {
                       FlSpot((sortedLogs.length - 1).toDouble(), 1),
                     ],
                     isCurved: false,
-                    color: AppColors.chartGreen.withOpacity(0.5),
+                    color: AppColors.chartGreen.withAlpha(128), // 0.5 opacity
                     barWidth: 2,
                     isStrokeCapRound: true,
                     dotData: const FlDotData(show: false),
@@ -195,7 +200,6 @@ class GoalProgressChart extends StatelessWidget {
                   ),
                 ],
               ),
-              swapAnimationDuration: const Duration(milliseconds: 500),
             ),
           ),
           const SizedBox(height: 16),
@@ -203,7 +207,11 @@ class GoalProgressChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildWeightItem('Start', startWeight, AppColors.textSecondary),
-              _buildWeightItem('Current', currentWeight, AppColors.accentColor),
+              _buildWeightItem(
+                'Current',
+                currentWeight,
+                AppColors.secondaryColor,
+              ),
               _buildWeightItem('Target', targetWeight, AppColors.chartGreen),
             ],
           ),
