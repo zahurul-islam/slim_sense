@@ -11,6 +11,7 @@ import '../../ai/meal_recommendation_screen.dart';
 import '../../ai/workout_recommendation_screen.dart';
 import '../../ai/diet_analysis_screen.dart';
 import '../../ai/weight_forecast_screen.dart';
+import '../../ai/progress_insights_screen.dart';
 import '../../health_coach/health_coach_screen.dart';
 
 class AiCoachTab extends StatefulWidget {
@@ -29,6 +30,7 @@ class _AiCoachTabState extends State<AiCoachTab>
     'Workouts',
     'Analysis',
     'Forecast',
+    'Insights',
     'Health Coach',
   ];
 
@@ -84,6 +86,7 @@ class _AiCoachTabState extends State<AiCoachTab>
                 WorkoutRecommendationScreen(user: userState.user),
                 DietAnalysisScreen(user: userState.user),
                 WeightForecastScreen(user: userState.user),
+                ProgressInsightsScreen(user: userState.user),
                 const HealthCoachScreen(),
               ],
             ),
@@ -135,6 +138,12 @@ class _AiCoachTabState extends State<AiCoachTab>
                     'Weight Forecast',
                     'Projection of your future weight progress based on current trends and recommendations for staying on track.',
                     Icons.trending_up,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHelpSection(
+                    'Progress Insights',
+                    'AI-powered analysis of your health data with visualizations and personalized insights to help you understand your progress.',
+                    Icons.insights,
                   ),
                   const SizedBox(height: 16),
                   _buildHelpSection(
